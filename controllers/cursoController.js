@@ -1,4 +1,4 @@
-import { Curso, Categoria } from '../models/index.js';
+import { Curso, Categoria, Modulo, Subtema, Material } from '../models/index.js';
 
 export const listarCursos = async (req, res) => {
   try {
@@ -18,7 +18,18 @@ export const verCurso = async (req, res) => {
   try {
     const { id } = req.params;
     const curso = await Curso.findByPk(id, {
-      include: [{ model: Categoria, attributes: ['nombre'] }],
+      include: [
+        { model: Categoria, attributes: ['nombre'] },
+        {
+          model: Modulo,
+          include: [
+            {
+              model: Subtema,
+              include: [Material]
+            }
+          ]
+        }
+      ]
     });
     if (!curso) return res.status(404).json({ error: 'Curso no encontrado' });
     res.json(curso);
