@@ -25,7 +25,9 @@ export const verCurso = async (req, res) => {
           include: [
             {
               model: Subtema,
-              include: [Material]
+              include: [
+                { model: Material, as: 'materiales' }
+              ]
             }
           ]
         }

@@ -1,6 +1,5 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
-import Subtema from './subtema.js';
 
 const Material = sequelize.define('material', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -12,8 +11,5 @@ const Material = sequelize.define('material', {
   tableName: 'material',
   timestamps: false
 });
-
-Material.belongsTo(Subtema, { foreignKey: 'subtema_id' });
-Subtema.hasMany(Material, { foreignKey: 'subtema_id' });
 
 export default Material; 

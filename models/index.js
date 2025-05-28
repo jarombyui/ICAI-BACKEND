@@ -8,6 +8,12 @@ import Material from './material.js';
 import Inscripcion from './inscripcion.js';
 import Pago from './pago.js';
 
+// Asociaciones
+Subtema.belongsTo(Modulo, { foreignKey: 'modulo_id' });
+Modulo.hasMany(Subtema, { foreignKey: 'modulo_id' });
+Subtema.hasMany(Material, { as: 'materiales', foreignKey: 'subtema_id' });
+Material.belongsTo(Subtema, { foreignKey: 'subtema_id' });
+
 export {
   sequelize,
   Usuario,
