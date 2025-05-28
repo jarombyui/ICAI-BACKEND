@@ -232,3 +232,10 @@ VALUES (
 
 --7. AÑADIR RESTRICCION PARA CURSO UNICO POR USUARIO
 ALTER TABLE inscripcion ADD CONSTRAINT unique_usuario_curso UNIQUE (usuario_id, curso_id);
+
+
+-- EXAMEN POBLAR DATOS
+INSERT INTO examen (modulo_id, nombre, porcentaje_aprob)
+VALUES (42, 'Examen Final de Introducción a la gestión', 60)
+RETURNING id; -- EL ID FUE 1
+
