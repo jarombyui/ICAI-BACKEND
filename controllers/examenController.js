@@ -1,4 +1,5 @@
 import { Examen, Pregunta, Respuesta } from '../models/index.js';
+import { sequelize, IntentoExamen } from '../models/index.js';
 
 export const listarExamenesPorModulo = async (req, res) => {
   try {
@@ -38,6 +39,8 @@ export const responderExamen = async (req, res) => {
   try {
     const { examen_id } = req.params;
     const { respuestas } = req.body; // [{ pregunta_id, respuesta_id }]
+    // Simulación de usuario autenticado (ajusta según tu auth real)
+    const usuario_id = req.usuario_id || 1; // Cambia esto por el id real del usuario autenticado
     let correctas = 0;
     for (const r of respuestas) {
       const respuesta = await Respuesta.findOne({ where: { id: r.respuesta_id, pregunta_id: r.pregunta_id } });
@@ -47,7 +50,28 @@ export const responderExamen = async (req, res) => {
     const examen = await Examen.findByPk(examen_id);
     const porcentaje = (correctas / total) * 100;
     const aprobado = porcentaje >= (examen.porcentaje_aprob || 60);
+    // Registrar el intento
+    await IntentoExamen.create({
+      usuario_id,
+      examen_id,
+      puntaje: porcentaje,
+      aprobado
+    });
     res.json({ correctas, total, porcentaje, aprobado });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const listarIntentosExamen = async (req, res) => {
+  try {
+    const { examen_id } = req.params;
+    const usuario_id = req.query.usuario_id || 1; // Simulación, ajusta según tu auth real
+    const intentos = await IntentoExamen.findAll({
+      where: { examen_id, usuario_id },
+      order: [['fecha', 'DESC']]
+    });
+    res.json(intentos);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

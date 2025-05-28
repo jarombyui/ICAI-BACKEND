@@ -111,6 +111,16 @@ CREATE TABLE certificado (
     horas INT NOT NULL
 );
 
+-- Tabla para registrar intentos de exámenes por usuario
+CREATE TABLE intento_examen (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT NOT NULL REFERENCES usuario(id),
+    examen_id INT NOT NULL REFERENCES examen(id),
+    puntaje NUMERIC(5,2) NOT NULL,
+    aprobado BOOLEAN NOT NULL,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- PASO 2 INSERTAR DATOS DE PRUEBA, COMPLETE LOS DEL CURSO 1  TABLAS
 
 INSERT INTO modulo (curso_id, nombre, descripcion, orden)
@@ -239,3 +249,14 @@ INSERT INTO examen (modulo_id, nombre, porcentaje_aprob)
 VALUES (42, 'Examen Final de Introducción a la gestión', 60)
 RETURNING id; -- EL ID FUE 1
 
+-- TABLA INTENTO EXAMEN
+
+-- Tabla para registrar intentos de exámenes por usuario
+CREATE TABLE intento_examen (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT NOT NULL REFERENCES usuario(id),
+    examen_id INT NOT NULL REFERENCES examen(id),
+    puntaje NUMERIC(5,2) NOT NULL,
+    aprobado BOOLEAN NOT NULL,
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

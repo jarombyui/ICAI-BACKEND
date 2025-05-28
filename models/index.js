@@ -10,6 +10,7 @@ import Pago from './pago.js';
 import Examen from './examen.js';
 import Pregunta from './pregunta.js';
 import Respuesta from './respuesta.js';
+import IntentoExamen from './intentoExamen.js';
 
 // Asociaciones
 Subtema.belongsTo(Modulo, { foreignKey: 'modulo_id' });
@@ -38,4 +39,5 @@ export {
   Examen,
   Pregunta,
   Respuesta,
+  IntentoExamen,
 }; 
