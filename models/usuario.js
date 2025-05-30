@@ -7,6 +7,7 @@ const Usuario = sequelize.define('usuario', {
   apellido: { type: DataTypes.STRING, allowNull: false },
   email: { type: DataTypes.STRING, allowNull: false, unique: true },
   password: { type: DataTypes.STRING, allowNull: false },
+  dni: { type: DataTypes.STRING, allowNull: true },
   google_id: { type: DataTypes.STRING, unique: true },
   fecha_registro: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
 }, {

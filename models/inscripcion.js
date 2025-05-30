@@ -8,7 +8,9 @@ const Inscripcion = sequelize.define('inscripcion', {
   usuario_id: { type: DataTypes.INTEGER, allowNull: false, references: { model: 'usuario', key: 'id' } },
   curso_id: { type: DataTypes.INTEGER, allowNull: false, references: { model: 'curso', key: 'id' } },
   estado: { type: DataTypes.STRING, defaultValue: 'pendiente' },
-  fecha: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
+  fecha: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+  fecha_inicio: { type: DataTypes.DATE, allowNull: true },
+  fecha_fin: { type: DataTypes.DATE, allowNull: true },
 }, {
   tableName: 'inscripcion',
   timestamps: false

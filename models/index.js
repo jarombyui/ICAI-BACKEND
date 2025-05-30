@@ -11,6 +11,7 @@ import Examen from './examen.js';
 import Pregunta from './pregunta.js';
 import Respuesta from './respuesta.js';
 import IntentoExamen from './intentoExamen.js';
+import Certificado from './certificado.js';
 
 // Asociaciones
 Subtema.belongsTo(Modulo, { foreignKey: 'modulo_id' });
@@ -40,4 +41,5 @@ export {
   Pregunta,
   Respuesta,
   IntentoExamen,
+  Certificado,
 }; 

@@ -9,6 +9,7 @@ import cursoRoutes from './routes/cursoRoutes.js';
 import inscripcionRoutes from './routes/inscripcionRoutes.js';
 import pagoRoutes from './routes/pagoRoutes.js';
 import examenRoutes from './routes/examenRoutes.js';
+import certificadoRoutes from './routes/certificadoRoutes.js';
 
 const app = express();
 app.use(express.json());
@@ -20,6 +21,7 @@ app.use('/api/cursos', cursoRoutes);
 app.use('/api/inscripciones', inscripcionRoutes);
 app.use('/api/pagos', pagoRoutes);
 app.use('/api/examenes', examenRoutes);
+app.use('/api/certificados', certificadoRoutes);
 
 const PORT = process.env.PORT || 4000;
 

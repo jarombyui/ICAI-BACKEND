@@ -260,3 +260,18 @@ CREATE TABLE intento_examen (
     aprobado BOOLEAN NOT NULL,
     fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+--- inserte datosen tablaEXAMEN
+INSERT INTO examen (modulo_id, nombre, porcentaje_aprob)
+VALUES (42, 'Examen Final de Introducción a la gestión', 60)
+RETURNING id;
+
+-- PARA LA GENERACION DE CERTIFICADO
+--AÑADIR COLUMNA DNI EN TABLA USUARIO
+ALTER TABLE usuario ADD COLUMN dni VARCHAR(20);
+
+-- PARA LA GENERACION DE CERTIFICADO
+-- AÑADIR COLUMNAS FECHA DE INICIO Y FIN EN TABLA INSCRIPCION
+ALTER TABLE inscripcion ADD COLUMN fecha_inicio DATE;
+ALTER TABLE inscripcion ADD COLUMN fecha_fin DATE;
+
