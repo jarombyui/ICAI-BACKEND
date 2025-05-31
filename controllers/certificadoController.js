@@ -34,7 +34,6 @@ export const emitirCertificado = async (req, res) => {
     const curso = await Curso.findByPk(curso_id);
     // Obtiene los módulos del curso
     const modulos = await Modulo.findAll({ where: { curso_id }, order: [['orden', 'ASC']] });
-    const nombresModulos = modulos.map(m => m.nombre).join(', ');
     // Obtiene la nota final (promedio de los exámenes aprobados del curso)
     const examenes = await Examen.findAll({ where: { modulo_id: modulos.map(m => m.id) } });
     let notaFinal = null;
@@ -50,12 +49,38 @@ export const emitirCertificado = async (req, res) => {
     const plantillaPath = path.join(process.cwd(), 'modelo-certificado', 'PLANTILLA1__CERTIFICADO.pdf');
     const existingPdfBytes = fs.readFileSync(plantillaPath);
     const pdfDoc = await PDFDocument.load(existingPdfBytes);
-    const page = pdfDoc.getPages()[0];
+
+    // Elimina todas las páginas excepto la primera (si hay más de una)
+    while (pdfDoc.getPageCount() > 1) {
+      pdfDoc.removePage(1);
+    }
+
+    // Usa la primera página para el certificado
+    let page = pdfDoc.getPage(0);
     const { width: pageWidth, height: pageHeight } = page.getSize();
     const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+    // Cargar fuente decorativa gótica para 'Certificado'
+    const fontGothicPath = path.join(process.cwd(), 'modelo-certificado', 'UnifrakturCook', 'UnifrakturCook-Bold.ttf');
+    let fontGothic;
+    try {
+      const fontGothicBytes = fs.readFileSync(fontGothicPath);
+      fontGothic = await pdfDoc.embedFont(fontGothicBytes);
+    } catch (e) {
+      fontGothic = fontBold;
+    }
+    // Cargar fuente manuscrita para el nombre del usuario
+    const fontScriptPath = path.join(process.cwd(), 'modelo-certificado', 'Great_Vibes', 'GreatVibes-Regular.ttf');
+    let fontScript;
+    try {
+      const fontScriptBytes = fs.readFileSync(fontScriptPath);
+      fontScript = await pdfDoc.embedFont(fontScriptBytes);
+    } catch (e) {
+      fontScript = fontBold;
+    }
     // Colores y tamaños
-    const gold = rgb(0.85, 0.65, 0.13);
+    const gold = rgb(0.72, 0.53, 0.04); // Dorado oscuro y elegante
+    const goldLight = rgb(0.95, 0.8, 0.3); // Dorado claro para brillo/reflejo
     const negro = rgb(0, 0, 0);
     // Margen lateral de 30mm a cada lado
     const mmToPt = mm => mm * 2.83465;
@@ -70,17 +95,28 @@ export const emitirCertificado = async (req, res) => {
     const sizeParrafo = 14;
     const sizeCurso = 18;
     const lineHeight = sizeParrafo * 1.5;
-    // 1. "Certificado" (grande, dorado)
+    // 1. "Certificado" (grande, dorado, gótica, con efecto brillo)
+    // Sombra/brillo
     page.drawText('Certificado', {
-      x: marginX + usableWidth / 2 - fontBold.widthOfTextAtSize('Certificado', sizeCertificado) / 2,
+      x: marginX + usableWidth / 2 - fontGothic.widthOfTextAtSize('Certificado', sizeCertificado) / 2 + 1,
+      y: currentY - 1,
+      size: sizeCertificado,
+      font: fontGothic,
+      color: goldLight,
+      maxWidth: usableWidth,
+    });
+    // Texto principal
+    page.drawText('Certificado', {
+      x: marginX + usableWidth / 2 - fontGothic.widthOfTextAtSize('Certificado', sizeCertificado) / 2,
       y: currentY,
       size: sizeCertificado,
-      font: fontBold,
+      font: fontGothic,
       color: gold,
       maxWidth: usableWidth,
     });
     currentY -= sizeCertificado * 1.2;
-    // 2. "Otorgado a:" (normal, negro)
+    // 2. "Otorgado a:" (normal, negro, subido y con más espacio abajo)
+    currentY += lineHeight * 0.5; // SUBE "Otorgado a:" un poco más arriba
     page.drawText('Otorgado a :', {
       x: marginX + usableWidth / 2 - font.widthOfTextAtSize('Otorgado a :', sizeOtorgado) / 2,
       y: currentY,
@@ -89,14 +125,24 @@ export const emitirCertificado = async (req, res) => {
       color: negro,
       maxWidth: usableWidth,
     });
-    currentY -= sizeOtorgado * 1.2;
-    // 3. Nombre (grande, dorado)
+    currentY -= sizeOtorgado * 1.2 + lineHeight * 1.2; // MÁS ESPACIO ANTES DEL NOMBRE
+    // 3. Nombre (grande, dorado, gótica, con efecto brillo)
     const nombreCompleto = `${usuario.nombre} ${usuario.apellido}`;
+    // Sombra/brillo
     page.drawText(nombreCompleto, {
-      x: marginX + usableWidth / 2 - fontBold.widthOfTextAtSize(nombreCompleto, sizeNombre) / 2,
+      x: marginX + usableWidth / 2 - fontGothic.widthOfTextAtSize(nombreCompleto, sizeNombre) / 2 + 1,
+      y: currentY - 1,
+      size: sizeNombre,
+      font: fontGothic,
+      color: goldLight,
+      maxWidth: usableWidth,
+    });
+    // Texto principal
+    page.drawText(nombreCompleto, {
+      x: marginX + usableWidth / 2 - fontGothic.widthOfTextAtSize(nombreCompleto, sizeNombre) / 2,
       y: currentY,
       size: sizeNombre,
-      font: fontBold,
+      font: fontGothic,
       color: gold,
       maxWidth: usableWidth,
     });
@@ -109,8 +155,6 @@ export const emitirCertificado = async (req, res) => {
     const bloque1 = `Identificado(a) con DNI ${usuario.dni} Por haber completado y aprobado satisfactoriamente el Curso de Especialización en:`;
     const bloque2 = curso.nombre; // nombre del curso, negrita, más grande
     const bloque3 = `organizado por el Instituto de Ciencias Administrativas e Ingeniería Aplicadas y El Instituto Americano de Ciencias Aplicadas, realizado del ${fechaInicioStr} al ${fechaFinStr} de 2025 con una duración de ${curso.horas} horas académicas.`;
-    const bloque4 = notaFinal ? `Nota final: ${notaFinal}` : '';
-    const bloque5 = nombresModulos ? `Módulos: ${nombresModulos}` : '';
     const bloque6 = `Lima, ${fechaActual}`;
     // 5. Bloque 1 (normal, word wrap)
     for (const linea of wrapText(bloque1, font, sizeParrafo, usableWidth)) {
@@ -147,33 +191,6 @@ export const emitirCertificado = async (req, res) => {
       });
       currentY -= lineHeight;
     }
-    // 8. Nota final y módulos (igual)
-    if (bloque4) {
-      for (const linea of wrapText(bloque4, font, sizeParrafo, usableWidth)) {
-        page.drawText(linea, {
-          x: marginX + usableWidth / 2 - font.widthOfTextAtSize(linea, sizeParrafo) / 2,
-          y: currentY,
-          size: sizeParrafo,
-          font,
-          color: negro,
-          maxWidth: usableWidth,
-        });
-        currentY -= lineHeight;
-      }
-    }
-    if (bloque5) {
-      for (const linea of wrapText(bloque5, font, sizeParrafo, usableWidth)) {
-        page.drawText(linea, {
-          x: marginX + usableWidth / 2 - font.widthOfTextAtSize(linea, sizeParrafo) / 2,
-          y: currentY,
-          size: sizeParrafo,
-          font,
-          color: negro,
-          maxWidth: usableWidth,
-        });
-        currentY -= lineHeight;
-      }
-    }
     // 9. Ciudad y fecha
     page.drawText(bloque6, {
       x: marginX + usableWidth / 2 - font.widthOfTextAtSize(bloque6, sizeParrafo) / 2,
@@ -183,6 +200,93 @@ export const emitirCertificado = async (req, res) => {
       color: negro,
       maxWidth: usableWidth,
     });
+
+    // SEGUNDA HOJA: Contenido del programa
+    const secondPage = pdfDoc.addPage([pageWidth, pageHeight]);
+    const { width: pageWidth2, height: pageHeight2 } = secondPage.getSize();
+    const marginX2 = mmToPt(100);
+    const usableWidth2 = pageWidth2 - 2 * marginX2;
+    let ySecond = pageHeight2 - mmToPt(30); // 30mm desde arriba
+    const sizeTituloContenido = 22;
+    const sizeModulo = 16;
+    const sizeSubtitulo = 16;
+    const sizeDato = 14;
+    const lineHeight2 = sizeDato * 1.5;
+    // Título "Contenido del programa:"
+    secondPage.drawText('Contenido del programa:', {
+      x: marginX2 + usableWidth2 / 2 - fontBold.widthOfTextAtSize('Contenido del programa:', sizeTituloContenido) / 2,
+      y: ySecond,
+      size: sizeTituloContenido,
+      font: fontBold,
+      color: negro,
+      maxWidth: usableWidth2,
+    });
+    ySecond -= sizeTituloContenido * 1.7;
+    // Nota final
+    if (notaFinal) {
+      const notaStr = `Nota final: ${notaFinal}`;
+      for (const linea of wrapText(notaStr, font, sizeDato, usableWidth2)) {
+        secondPage.drawText(linea, {
+          x: marginX2 + usableWidth2 / 2 - font.widthOfTextAtSize(linea, sizeDato) / 2,
+          y: ySecond,
+          size: sizeDato,
+          font,
+          color: negro,
+          maxWidth: usableWidth2,
+        });
+        ySecond -= lineHeight2;
+      }
+    }
+    // Subtítulo MODULOS :
+    secondPage.drawText('MODULOS :', {
+      x: marginX2 + usableWidth2 / 2 - fontBold.widthOfTextAtSize('MODULOS :', sizeSubtitulo) / 2,
+      y: ySecond,
+      size: sizeSubtitulo,
+      font: fontBold,
+      color: negro,
+      maxWidth: usableWidth2,
+    });
+    ySecond -= sizeSubtitulo * 1.5;
+    // Listar nombres de módulos (uno por línea)
+    modulos.forEach((modulo) => {
+      for (const linea of wrapText(modulo.nombre, font, sizeModulo, usableWidth2)) {
+        secondPage.drawText(linea, {
+          x: marginX2 + usableWidth2 / 2 - font.widthOfTextAtSize(linea, sizeModulo) / 2,
+          y: ySecond,
+          size: sizeModulo,
+          font,
+          color: negro,
+          maxWidth: usableWidth2,
+        });
+        ySecond -= sizeModulo * 1.5;
+      }
+    });
+    // Subtítulo Datos academicos
+    ySecond -= sizeSubtitulo * 0.7;
+    secondPage.drawText('Datos academicos', {
+      x: marginX2 + usableWidth2 / 2 - fontBold.widthOfTextAtSize('Datos academicos', sizeSubtitulo) / 2,
+      y: ySecond,
+      size: sizeSubtitulo,
+      font: fontBold,
+      color: negro,
+      maxWidth: usableWidth2,
+    });
+    ySecond -= sizeSubtitulo * 1.3;
+    // ID de certificado (placeholder, puedes reemplazar por el real si lo tienes)
+    const idCertificado = 'XXXSXSXSXSX';
+    const idStr = `ID de certificado: ${idCertificado}`;
+    for (const linea of wrapText(idStr, font, sizeDato, usableWidth2)) {
+      secondPage.drawText(linea, {
+        x: marginX2 + usableWidth2 / 2 - font.widthOfTextAtSize(linea, sizeDato) / 2,
+        y: ySecond,
+        size: sizeDato,
+        font,
+        color: negro,
+        maxWidth: usableWidth2,
+      });
+      ySecond -= lineHeight2;
+    }
+
     // Guarda el PDF generado
     const pdfBytes = await pdfDoc.save();
     const outputDir = path.join(process.cwd(), 'certificados');
