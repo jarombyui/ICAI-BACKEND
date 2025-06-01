@@ -3,7 +3,8 @@ import {
   emitirCertificado, 
   listarCertificados, 
   listarCertificadosUsuario,
-  validarCertificado 
+  validarCertificado,
+  descargarMiCertificado
 } from '../controllers/certificadoController.js';
 import { verificarToken, esAdmin, esMismoUsuarioOAdmin } from '../middleware/authMiddleware.js';
 
@@ -20,5 +21,7 @@ router.get('/admin/listar', verificarToken, esAdmin, listarCertificados);
 
 // Rutas que requieren ser el mismo usuario o admin
 router.get('/usuario/:id', verificarToken, esMismoUsuarioOAdmin, listarCertificadosUsuario);
+
+router.get('/descargar/:curso_id', verificarToken, descargarMiCertificado);
 
 export default router; 

@@ -167,4 +167,19 @@ export const listarIntentosExamen = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
+
+// Listar intentos de un examen para el usuario autenticado
+export const listarMisIntentosExamen = async (req, res) => {
+  try {
+    const { examen_id } = req.params;
+    const usuario_id = req.usuario.id;
+    const intentos = await IntentoExamen.findAll({
+      where: { examen_id, usuario_id },
+      order: [['fecha', 'DESC']]
+    });
+    res.json(intentos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 }; 

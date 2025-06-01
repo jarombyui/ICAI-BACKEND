@@ -393,4 +393,23 @@ export const validarCertificado = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
+
+// Descargar certificado PDF del usuario autenticado para un curso
+export const descargarMiCertificado = async (req, res) => {
+  try {
+    const usuario_id = req.usuario.id;
+    const { curso_id } = req.params;
+    const certificado = await Certificado.findOne({ where: { usuario_id, curso_id } });
+    if (!certificado) {
+      return res.status(404).json({ error: 'Certificado no encontrado' });
+    }
+    const pdfPath = path.join(process.cwd(), 'certificados', `certificado_${usuario_id}_${curso_id}.pdf`);
+    if (!fs.existsSync(pdfPath)) {
+      return res.status(404).json({ error: 'Archivo PDF no encontrado' });
+    }
+    res.download(pdfPath, `certificado_${usuario_id}_${curso_id}.pdf`);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 }; 

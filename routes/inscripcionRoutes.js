@@ -1,11 +1,12 @@
 import express from 'express';
-import { inscribir, listarInscripcionesUsuario, eliminarInscripcion, listarTodasInscripciones } from '../controllers/inscripcionController.js';
+import { inscribir, listarInscripcionesUsuario, eliminarInscripcion, listarTodasInscripciones, listarMisInscripciones } from '../controllers/inscripcionController.js';
 import { verificarToken, esAdmin, esMismoUsuarioOAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 // Rutas que requieren autenticación
 router.post('/', verificarToken, inscribir);
+router.get('/mis', verificarToken, listarMisInscripciones);
 
 // Rutas que requieren ser el mismo usuario o admin
 router.get('/usuario/:usuario_id', verificarToken, esMismoUsuarioOAdmin, listarInscripcionesUsuario);

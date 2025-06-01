@@ -25,7 +25,7 @@ Inscripcion.belongsTo(Curso, { foreignKey: 'curso_id' });
 
 // Examenes y preguntas
 Examen.belongsTo(Modulo, { foreignKey: 'modulo_id' });
-Modulo.hasMany(Examen, { foreignKey: 'modulo_id' });
+Modulo.hasMany(Examen, { as: 'examenes', foreignKey: 'modulo_id' });
 Examen.hasMany(Pregunta, { as: 'preguntas', foreignKey: 'examen_id' });
 Pregunta.belongsTo(Examen, { foreignKey: 'examen_id' });
 Pregunta.hasMany(Respuesta, { as: 'respuestas', foreignKey: 'pregunta_id' });

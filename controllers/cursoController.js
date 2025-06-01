@@ -1,4 +1,4 @@
-import { Curso, Categoria, Modulo, Subtema, Material, Inscripcion } from '../models/index.js';
+import { Curso, Categoria, Modulo, Subtema, Material, Inscripcion, Examen } from '../models/index.js';
 
 export const listarCursos = async (req, res) => {
   try {
@@ -45,6 +45,11 @@ export const verCurso = async (req, res) => {
                   attributes: ['id', 'tipo', 'url', 'descripcion']
                 }
               ]
+            },
+            {
+              model: Examen,
+              as: 'examenes',
+              attributes: ['id', 'nombre', 'porcentaje_aprob']
             }
           ],
           order: [['orden', 'ASC']]

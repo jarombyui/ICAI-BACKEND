@@ -59,4 +59,18 @@ export const listarTodasInscripciones = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
+
+export const listarMisInscripciones = async (req, res) => {
+  try {
+    const usuario_id = req.usuario.id;
+    const inscripciones = await Inscripcion.findAll({
+      where: { usuario_id },
+      include: [{ model: Curso }],
+      order: [['id', 'ASC']]
+    });
+    res.json(inscripciones);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 }; 
