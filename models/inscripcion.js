@@ -1,7 +1,6 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
 import Usuario from './usuario.js';
-import Curso from './curso.js';
 
 const Inscripcion = sequelize.define('inscripcion', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -17,6 +16,5 @@ const Inscripcion = sequelize.define('inscripcion', {
 });
 
 Inscripcion.belongsTo(Usuario, { foreignKey: 'usuario_id' });
-Inscripcion.belongsTo(Curso, { foreignKey: 'curso_id' });
 
 export default Inscripcion; 

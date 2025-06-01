@@ -305,4 +305,92 @@ export const emitirCertificado = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
+
+// Listar todos los certificados (solo admin)
+export const listarCertificados = async (req, res) => {
+  try {
+    const certificados = await Certificado.findAll({
+      include: [
+        {
+          model: Usuario,
+          attributes: ['id', 'nombre', 'apellido', 'email', 'dni']
+        },
+        {
+          model: Curso,
+          attributes: ['id', 'nombre', 'horas']
+        }
+      ],
+      order: [['fecha_emision', 'DESC']]
+    });
+
+    res.json(certificados);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Listar certificados de un usuario específico
+export const listarCertificadosUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const certificados = await Certificado.findAll({
+      where: { usuario_id: id },
+      include: [
+        {
+          model: Curso,
+          attributes: ['id', 'nombre', 'horas']
+        }
+      ],
+      order: [['fecha_emision', 'DESC']]
+    });
+
+    res.json(certificados);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Validar un certificado por ID
+export const validarCertificado = async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const certificado = await Certificado.findByPk(id, {
+      include: [
+        {
+          model: Usuario,
+          attributes: ['id', 'nombre', 'apellido', 'dni']
+        },
+        {
+          model: Curso,
+          attributes: ['id', 'nombre', 'horas']
+        }
+      ]
+    });
+
+    if (!certificado) {
+      return res.status(404).json({ error: 'Certificado no encontrado' });
+    }
+
+    res.json({
+      valido: true,
+      certificado: {
+        id: certificado.id,
+        fecha_emision: certificado.fecha_emision,
+        usuario: {
+          nombre: certificado.usuario.nombre,
+          apellido: certificado.usuario.apellido,
+          dni: certificado.usuario.dni
+        },
+        curso: {
+          nombre: certificado.curso.nombre,
+          horas: certificado.curso.horas
+        }
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 }; 

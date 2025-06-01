@@ -1,10 +1,22 @@
 import express from 'express';
-import { inscribir, listarInscripcionesUsuario, eliminarInscripcion } from '../controllers/inscripcionController.js';
+import { inscribir, listarInscripcionesUsuario, eliminarInscripcion, listarTodasInscripciones } from '../controllers/inscripcionController.js';
+import { verificarToken, esAdmin, esMismoUsuarioOAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/', inscribir);
-router.get('/usuario/:usuario_id', listarInscripcionesUsuario);
-router.delete('/:id', eliminarInscripcion);
+// Rutas que requieren autenticación
+router.post('/', verificarToken, inscribir);
+
+// Rutas que requieren ser el mismo usuario o admin
+router.get('/usuario/:usuario_id', verificarToken, esMismoUsuarioOAdmin, listarInscripcionesUsuario);
+router.delete('/:id', verificarToken, esMismoUsuarioOAdmin, eliminarInscripcion);
+
+// Rutas que requieren ser admin
+router.get('/admin/listar', verificarToken, esAdmin, listarTodasInscripciones);
+
+router.get('/admin/estadisticas', verificarToken, esAdmin, (req, res) => {
+  // TODO: Implementar estadísticas de inscripciones para admin
+  res.json({ message: 'Estadísticas de inscripciones (solo admin)' });
+});
 
 export default router; 

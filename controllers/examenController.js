@@ -36,6 +36,49 @@ export const verExamen = async (req, res) => {
   }
 };
 
+// Crear examen (solo admin)
+export const crearExamen = async (req, res) => {
+  try {
+    const { modulo_id, nombre, porcentaje_aprob } = req.body;
+    if (!modulo_id || !nombre) {
+      return res.status(400).json({ error: 'Faltan campos requeridos: modulo_id, nombre' });
+    }
+    const examen = await Examen.create({ modulo_id, nombre, porcentaje_aprob });
+    res.status(201).json(examen);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// Actualizar examen (solo admin)
+export const actualizarExamen = async (req, res) => {
+  try {
+    const { examen_id } = req.params;
+    const { nombre, porcentaje_aprob } = req.body;
+    const examen = await Examen.findByPk(examen_id);
+    if (!examen) return res.status(404).json({ error: 'Examen no encontrado' });
+    if (nombre) examen.nombre = nombre;
+    if (porcentaje_aprob !== undefined) examen.porcentaje_aprob = porcentaje_aprob;
+    await examen.save();
+    res.json(examen);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+// Eliminar examen (solo admin)
+export const eliminarExamen = async (req, res) => {
+  try {
+    const { examen_id } = req.params;
+    const examen = await Examen.findByPk(examen_id);
+    if (!examen) return res.status(404).json({ error: 'Examen no encontrado' });
+    await examen.destroy();
+    res.json({ message: 'Examen eliminado correctamente' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export const responderExamen = async (req, res) => {
   try {
     const { examen_id } = req.params;

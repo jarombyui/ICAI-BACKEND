@@ -10,7 +10,7 @@ const Subtema = sequelize.define('subtema', {
   orden: { type: DataTypes.INTEGER, allowNull: false }
 }, {
   tableName: 'subtema',
-  timestamps: false
+  timestamps: true
 });
 
 Subtema.belongsTo(Modulo, { foreignKey: 'modulo_id' });

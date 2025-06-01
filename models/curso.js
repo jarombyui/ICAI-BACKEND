@@ -13,7 +13,7 @@ const Curso = sequelize.define('curso', {
   imagen_url: { type: DataTypes.STRING }
 }, {
   tableName: 'curso',
-  timestamps: false
+  timestamps: true
 });
 
 Curso.belongsTo(Categoria, { foreignKey: 'categoria_id' });

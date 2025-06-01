@@ -10,7 +10,7 @@ const Modulo = sequelize.define('modulo', {
   orden: { type: DataTypes.INTEGER, allowNull: false }
 }, {
   tableName: 'modulo',
-  timestamps: false
+  timestamps: true
 });
 
 Modulo.belongsTo(Curso, { foreignKey: 'curso_id' });

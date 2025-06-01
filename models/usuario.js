@@ -9,6 +9,11 @@ const Usuario = sequelize.define('usuario', {
   password: { type: DataTypes.STRING, allowNull: false },
   dni: { type: DataTypes.STRING, allowNull: true },
   google_id: { type: DataTypes.STRING, unique: true },
+  rol: { 
+    type: DataTypes.ENUM('admin', 'user'),
+    defaultValue: 'user',
+    allowNull: false
+  },
   fecha_registro: { type: DataTypes.DATE, defaultValue: DataTypes.NOW }
 }, {
   tableName: 'usuario',

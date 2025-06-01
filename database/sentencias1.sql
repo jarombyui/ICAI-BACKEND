@@ -275,3 +275,36 @@ ALTER TABLE usuario ADD COLUMN dni VARCHAR(20);
 ALTER TABLE inscripcion ADD COLUMN fecha_inicio DATE;
 ALTER TABLE inscripcion ADD COLUMN fecha_fin DATE;
 
+-- consultando la estrcutura de las tablas
+
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'modulo';  -- Cambia por 'subtema' o 'material'
+
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'subtema';  -- Cambia por 'subtema' o 'material'
+
+SELECT column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_name = 'material';  -- Cambia por 'subtema' o 'material'
+
+-- añadi columnas a curso
+ALTER TABLE curso ADD COLUMN "createdAt" TIMESTAMP DEFAULT NOW();
+ALTER TABLE curso ADD COLUMN "updatedAt" TIMESTAMP DEFAULT NOW();
+
+-- altero un usuario para que tenga rol admin
+UPDATE usuario SET rol = 'admin' WHERE id = 7;
+
+-- inserte columnasa modulo
+ALTER TABLE modulo ADD COLUMN "createdAt" TIMESTAMP DEFAULT NOW();
+ALTER TABLE modulo ADD COLUMN "updatedAt" TIMESTAMP DEFAULT NOW();
+
+-- inserte columnasa subtema
+ALTER TABLE subtema ADD COLUMN "createdAt" TIMESTAMP DEFAULT NOW();
+ALTER TABLE subtema ADD COLUMN "updatedAt" TIMESTAMP DEFAULT NOW();
+
+--Ejecuta este SQL en tu base de datos para que la secuencia siga al último id real:
+SELECT setval('curso_id_seq', (SELECT MAX(id) FROM curso));
+
+

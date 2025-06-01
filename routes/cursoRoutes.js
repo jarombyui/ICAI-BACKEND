@@ -1,10 +1,22 @@
 import express from 'express';
-import { listarCursos, verCurso, crearCurso } from '../controllers/cursoController.js';
+import { 
+  listarCursos, 
+  verCurso, 
+  crearCurso,
+  actualizarCurso,
+  eliminarCurso
+} from '../controllers/cursoController.js';
+import { verificarToken, esAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
+// Rutas públicas (no requieren autenticación)
 router.get('/', listarCursos);
 router.get('/:id', verCurso);
-router.post('/', crearCurso);
+
+// Rutas que requieren ser admin
+router.post('/', verificarToken, esAdmin, crearCurso);
+router.put('/:id', verificarToken, esAdmin, actualizarCurso);
+router.delete('/:id', verificarToken, esAdmin, eliminarCurso);
 
 export default router; 

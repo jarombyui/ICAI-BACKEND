@@ -1,11 +1,20 @@
 import express from 'express';
-import { listarExamenesPorModulo, verExamen, responderExamen, listarIntentosExamen } from '../controllers/examenController.js';
+import { listarExamenesPorModulo, verExamen, responderExamen, listarIntentosExamen, crearExamen, actualizarExamen, eliminarExamen } from '../controllers/examenController.js';
+import { verificarToken, esAdmin, esMismoUsuarioOAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/modulos/:modulo_id/examenes', listarExamenesPorModulo);
-router.get('/examenes/:examen_id', verExamen);
-router.post('/examenes/:examen_id/responder', responderExamen);
-router.get('/examenes/:examen_id/intentos', listarIntentosExamen);
+// Rutas que requieren autenticación
+router.get('/modulos/:modulo_id/examenes', verificarToken, listarExamenesPorModulo);
+router.get('/examenes/:examen_id', verificarToken, verExamen);
+router.post('/examenes/:examen_id/responder', verificarToken, responderExamen);
+
+// Rutas que requieren ser el mismo usuario o admin
+router.get('/examenes/:examen_id/intentos', verificarToken, esMismoUsuarioOAdmin, listarIntentosExamen);
+
+// Rutas que requieren ser admin
+router.post('/examenes', verificarToken, esAdmin, crearExamen);
+router.put('/examenes/:examen_id', verificarToken, esAdmin, actualizarExamen);
+router.delete('/examenes/:examen_id', verificarToken, esAdmin, eliminarExamen);
 
 export default router; 

@@ -1,8 +1,24 @@
 import express from 'express';
-import { emitirCertificado } from '../controllers/certificadoController.js';
+import { 
+  emitirCertificado, 
+  listarCertificados, 
+  listarCertificadosUsuario,
+  validarCertificado 
+} from '../controllers/certificadoController.js';
+import { verificarToken, esAdmin, esMismoUsuarioOAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/emitir', emitirCertificado);
+// Rutas públicas
+router.get('/validar/:id', validarCertificado);
+
+// Rutas que requieren autenticación
+router.post('/emitir', verificarToken, emitirCertificado);
+
+// Rutas que requieren ser admin
+router.get('/admin/listar', verificarToken, esAdmin, listarCertificados);
+
+// Rutas que requieren ser el mismo usuario o admin
+router.get('/usuario/:id', verificarToken, esMismoUsuarioOAdmin, listarCertificadosUsuario);
 
 export default router; 
