@@ -11,9 +11,23 @@ export const listarCursos = async (req, res) => {
     const cursos = await Curso.findAll({
       where,
       include: [
-        { 
-          model: Categoria, 
-          attributes: ['id', 'nombre'] 
+        { model: Categoria, attributes: ['id', 'nombre'] },
+        {
+          model: Modulo,
+          include: [
+            {
+              model: Subtema,
+              include: [
+                { model: Material, as: 'materiales', attributes: ['id', 'tipo', 'url', 'descripcion'] }
+              ]
+            },
+            {
+              model: Examen,
+              as: 'examenes',
+              attributes: ['id', 'nombre', 'porcentaje_aprob']
+            }
+          ],
+          order: [['orden', 'ASC']]
         }
       ],
       order: [['createdAt', 'DESC']]

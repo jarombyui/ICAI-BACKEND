@@ -16,6 +16,7 @@ import materialRoutes from './routes/materialRoutes.js';
 import usuarioRoutes from './routes/usuarioRoutes.js';
 import preguntaRoutes from './routes/preguntaRoutes.js';
 import respuestaRoutes from './routes/respuestaRoutes.js';
+import path from 'path';
 
 const app = express();
 app.use(express.json());
@@ -34,6 +35,7 @@ app.use('/api/material', materialRoutes);
 app.use('/api/usuario', usuarioRoutes);
 app.use('/api/preguntas', preguntaRoutes);
 app.use('/api/respuestas', respuestaRoutes);
+app.use('/certificados', express.static(path.join(process.cwd(), 'certificados')));
 
 const PORT = process.env.PORT || 4000;
 
