@@ -1,8 +1,8 @@
 import { DataTypes } from 'sequelize';
-import sequelize from '../config/database.js';
+import { sequelize } from '../config/database.js';
 import Categoria from './categoria.js';
 
-const Curso = sequelize.define('curso', {
+export const Curso = sequelize.define('curso', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
   nombre: { type: DataTypes.STRING, allowNull: false },
   descripcion: { type: DataTypes.TEXT },
@@ -16,6 +16,4 @@ const Curso = sequelize.define('curso', {
   timestamps: true
 });
 
-Curso.belongsTo(Categoria, { foreignKey: 'categoria_id' });
-
-export default Curso; 
+Curso.belongsTo(Categoria, { foreignKey: 'categoria_id' }); 

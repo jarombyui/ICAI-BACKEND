@@ -16,6 +16,7 @@ import materialRoutes from './routes/materialRoutes.js';
 import usuarioRoutes from './routes/usuarioRoutes.js';
 import preguntaRoutes from './routes/preguntaRoutes.js';
 import respuestaRoutes from './routes/respuestaRoutes.js';
+import categoriaRoutes from './routes/categoriaRoutes.js';
 import path from 'path';
 
 const app = express();
@@ -25,7 +26,7 @@ app.use(helmet());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/cursos', cursoRoutes);
-app.use('/api/modulo', moduloRoutes);
+app.use('/api/modulos', moduloRoutes);
 app.use('/api/subtema', subtemaRoutes);
 app.use('/api/inscripciones', inscripcionRoutes);
 app.use('/api/pagos', pagoRoutes);
@@ -35,6 +36,7 @@ app.use('/api/material', materialRoutes);
 app.use('/api/usuario', usuarioRoutes);
 app.use('/api/preguntas', preguntaRoutes);
 app.use('/api/respuestas', respuestaRoutes);
+app.use('/api/categorias', categoriaRoutes);
 app.use('/certificados', express.static(path.join(process.cwd(), 'certificados')));
 
 const PORT = process.env.PORT || 4000;

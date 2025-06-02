@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import sequelize from '../config/database.js';
+import { sequelize } from '../config/database.js';
 import Subtema from './subtema.js';
 
 const Material = sequelize.define('material', {

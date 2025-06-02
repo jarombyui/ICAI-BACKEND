@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import sequelize from '../config/database.js';
+import { sequelize } from '../config/database.js';
 
 const IntentoExamen = sequelize.define('intento_examen', {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },

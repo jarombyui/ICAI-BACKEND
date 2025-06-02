@@ -2,7 +2,7 @@ import { Sequelize } from 'sequelize';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const sequelize = new Sequelize(
+export const sequelize = new Sequelize(
   process.env.DB_NAME, // icai_cursos
   process.env.DB_USER,
   process.env.DB_PASS,
@@ -10,7 +10,8 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     dialect: 'postgres',
     logging: false,
+    define: {
+      freezeTableName: true
+    }
   }
-);
-
-export default sequelize; 
+); 

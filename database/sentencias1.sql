@@ -308,3 +308,4 @@ ALTER TABLE subtema ADD COLUMN "updatedAt" TIMESTAMP DEFAULT NOW();
 SELECT setval('curso_id_seq', (SELECT MAX(id) FROM curso));
 
 
+

@@ -1,28 +1,24 @@
 import express from 'express';
 import {
+  listarModulos,
   listarModulosPorCurso,
-  verModulo,
   crearModulo,
   actualizarModulo,
-  eliminarModulo
+  eliminarModulo,
+  obtenerModulo
 } from '../controllers/moduloController.js';
 import { verificarToken, esAdmin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Listar módulos de un curso (público)
-router.get('/curso/:curso_id', listarModulosPorCurso);
+// Rutas públicas
+router.get('/', listarModulos);
+router.get('/curso/:cursoId', listarModulosPorCurso);
+router.get('/:id', obtenerModulo);
 
-// Ver un módulo (público)
-router.get('/:id', verModulo);
-
-// Crear módulo (solo admin)
+// Rutas protegidas (solo admin)
 router.post('/', verificarToken, esAdmin, crearModulo);
-
-// Actualizar módulo (solo admin)
 router.put('/:id', verificarToken, esAdmin, actualizarModulo);
-
-// Eliminar módulo (solo admin)
 router.delete('/:id', verificarToken, esAdmin, eliminarModulo);
 
 export default router; 

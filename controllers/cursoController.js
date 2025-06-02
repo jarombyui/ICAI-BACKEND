@@ -34,6 +34,7 @@ export const listarCursos = async (req, res) => {
     });
     res.json(cursos);
   } catch (error) {
+    console.error('Error en listarCursos:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -73,6 +74,7 @@ export const verCurso = async (req, res) => {
     if (!curso) return res.status(404).json({ error: 'Curso no encontrado' });
     res.json(curso);
   } catch (error) {
+    console.error('Error en verCurso:', error);
     res.status(500).json({ error: error.message });
   }
 };
@@ -121,6 +123,7 @@ export const crearCurso = async (req, res) => {
 
     res.status(201).json(curso);
   } catch (error) {
+    console.error('Error en crearCurso:', error);
     res.status(400).json({ error: error.message });
   }
 };
@@ -182,6 +185,7 @@ export const actualizarCurso = async (req, res) => {
 
     res.json(cursoActualizado);
   } catch (error) {
+    console.error('Error en actualizarCurso:', error);
     res.status(400).json({ error: error.message });
   }
 };
@@ -210,6 +214,7 @@ export const eliminarCurso = async (req, res) => {
     await curso.destroy();
     res.json({ message: 'Curso eliminado exitosamente' });
   } catch (error) {
+    console.error('Error en eliminarCurso:', error);
     res.status(500).json({ error: error.message });
   }
 }; 

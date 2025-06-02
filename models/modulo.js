@@ -1,18 +1,43 @@
 import { DataTypes } from 'sequelize';
-import sequelize from '../config/database.js';
-import Curso from './curso.js';
+import { sequelize } from '../config/database.js';
+import { Curso } from './curso.js';
 
-const Modulo = sequelize.define('modulo', {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  curso_id: { type: DataTypes.INTEGER, allowNull: false, references: { model: 'curso', key: 'id' } },
-  nombre: { type: DataTypes.STRING, allowNull: false },
-  descripcion: { type: DataTypes.TEXT },
-  orden: { type: DataTypes.INTEGER, allowNull: false }
+export const Modulo = sequelize.define('Modulo', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  nombre: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
+  },
+  descripcion: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  orden: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: 1
+  },
+  curso_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'cursos',
+      key: 'id'
+    }
+  }
 }, {
   tableName: 'modulo',
   timestamps: true
 });
 
+// Relaciones
 Modulo.belongsTo(Curso, { foreignKey: 'curso_id' });
 Curso.hasMany(Modulo, { foreignKey: 'curso_id' });
 
