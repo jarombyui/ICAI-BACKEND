@@ -14,8 +14,8 @@ router.get('/examenes/:examen_id/intentos', verificarToken, esMismoUsuarioOAdmin
 router.get('/examenes/:examen_id/mis-intentos', verificarToken, listarMisIntentosExamen);
 
 // Rutas que requieren ser admin
-router.post('/examenes', verificarToken, esAdmin, crearExamen);
-router.put('/examenes/:examen_id', verificarToken, esAdmin, actualizarExamen);
-router.delete('/examenes/:examen_id', verificarToken, esAdmin, eliminarExamen);
+router.post('/', verificarToken, esAdmin, crearExamen);
+router.put('/:examen_id', verificarToken, esAdmin, actualizarExamen);
+router.delete('/:examen_id', verificarToken, esAdmin, eliminarExamen);
 
 export default router; 
