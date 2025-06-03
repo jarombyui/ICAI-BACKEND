@@ -105,9 +105,22 @@ export const responderExamen = async (req, res) => {
     }
     console.log('usuario_id usado para intento:', usuario_id);
     let correctas = 0;
+    let detalle = [];
     for (const r of respuestas) {
-      const respuesta = await Respuesta.findOne({ where: { id: r.respuesta_id, pregunta_id: r.pregunta_id } });
-      if (respuesta && respuesta.es_correcta) correctas++;
+      const pregunta = await Pregunta.findByPk(r.pregunta_id, {
+        include: [{ model: Respuesta, as: 'respuestas' }]
+      });
+      const respuestaSeleccionada = pregunta.respuestas.find(resp => resp.id === r.respuesta_id);
+      const respuestaCorrecta = pregunta.respuestas.find(resp => resp.es_correcta);
+      const esCorrecta = respuestaSeleccionada && respuestaSeleccionada.es_correcta;
+      if (esCorrecta) correctas++;
+      detalle.push({
+        pregunta_id: pregunta.id,
+        texto: pregunta.texto,
+        respuesta_seleccionada: respuestaSeleccionada ? respuestaSeleccionada.texto : null,
+        es_correcta: !!esCorrecta,
+        respuesta_correcta: respuestaCorrecta ? respuestaCorrecta.texto : null
+      });
     }
     const total = respuestas.length;
     const examen = await Examen.findByPk(examen_id);
@@ -149,7 +162,7 @@ export const responderExamen = async (req, res) => {
         });
       }
     }
-    res.json({ correctas, total, porcentaje, aprobado });
+    res.json({ correctas, total, porcentaje, aprobado, detalle });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

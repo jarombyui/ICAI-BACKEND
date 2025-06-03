@@ -50,9 +50,11 @@ export const verCurso = async (req, res) => {
         },
         {
           model: Modulo,
+          as: 'modulos',
           include: [
             {
               model: Subtema,
+              as: 'subtemas',
               include: [
                 { 
                   model: Material, 

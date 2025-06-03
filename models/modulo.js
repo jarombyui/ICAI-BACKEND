@@ -39,6 +39,6 @@ export const Modulo = sequelize.define('Modulo', {
 
 // Relaciones
 Modulo.belongsTo(Curso, { foreignKey: 'curso_id' });
-Curso.hasMany(Modulo, { foreignKey: 'curso_id' });
+Curso.hasMany(Modulo, { as: 'modulos', foreignKey: 'curso_id' });
 
 export default Modulo; 
