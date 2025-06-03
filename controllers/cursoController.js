@@ -14,9 +14,11 @@ export const listarCursos = async (req, res) => {
         { model: Categoria, attributes: ['id', 'nombre'] },
         {
           model: Modulo,
+          as: 'modulos',
           include: [
             {
               model: Subtema,
+              as: 'subtemas',
               include: [
                 { model: Material, as: 'materiales', attributes: ['id', 'tipo', 'url', 'descripcion'] }
               ]
