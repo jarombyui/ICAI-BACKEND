@@ -4,7 +4,9 @@ import {
   verCurso, 
   crearCurso,
   actualizarCurso,
-  eliminarCurso
+  eliminarCurso,
+  uploadCursoImage,
+  subirImagenCurso
 } from '../controllers/cursoController.js';
 import { verificarToken, esAdmin } from '../middleware/authMiddleware.js';
 
@@ -18,5 +20,8 @@ router.get('/:id', verCurso);
 router.post('/', verificarToken, esAdmin, crearCurso);
 router.put('/:id', verificarToken, esAdmin, actualizarCurso);
 router.delete('/:id', verificarToken, esAdmin, eliminarCurso);
+
+// Subida de imagen de curso (solo admin)
+router.post('/upload', verificarToken, esAdmin, uploadCursoImage.single('file'), subirImagenCurso);
 
 export default router; 

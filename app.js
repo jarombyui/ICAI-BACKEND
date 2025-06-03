@@ -22,7 +22,14 @@ import path from 'path';
 const app = express();
 app.use(express.json());
 app.use(cors());
-app.use(helmet());
+app.use('/uploads', (req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  next();
+}, express.static(path.join(process.cwd(), 'uploads')));
+
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+}));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/cursos', cursoRoutes);
@@ -38,7 +45,6 @@ app.use('/api/preguntas', preguntaRoutes);
 app.use('/api/respuestas', respuestaRoutes);
 app.use('/api/categorias', categoriaRoutes);
 app.use('/certificados', express.static(path.join(process.cwd(), 'certificados')));
-app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 const PORT = process.env.PORT || 4000;
 
