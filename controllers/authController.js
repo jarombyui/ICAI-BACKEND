@@ -31,7 +31,9 @@ export const register = async (req, res) => {
       { 
         id: usuario.id, 
         email: usuario.email,
-        rol: usuario.rol 
+        rol: usuario.rol,
+        nombre: usuario.nombre,
+        apellido: usuario.apellido
       }, 
       process.env.JWT_SECRET, 
       { expiresIn: '1d' }
@@ -73,7 +75,9 @@ export const login = async (req, res) => {
       { 
         id: usuario.id, 
         email: usuario.email,
-        rol: usuario.rol 
+        rol: usuario.rol,
+        nombre: usuario.nombre,
+        apellido: usuario.apellido
       }, 
       process.env.JWT_SECRET, 
       { expiresIn: '1d' }

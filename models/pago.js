@@ -8,7 +8,8 @@ const Pago = sequelize.define('pago', {
   metodo: { type: DataTypes.STRING, allowNull: false },
   monto: { type: DataTypes.DECIMAL(6,2), allowNull: false },
   fecha: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
-  estado: { type: DataTypes.STRING, defaultValue: 'pendiente' }
+  estado: { type: DataTypes.STRING, defaultValue: 'pendiente' },
+  comprobante_url: { type: DataTypes.STRING, allowNull: true }
 }, {
   tableName: 'pago',
   timestamps: false
