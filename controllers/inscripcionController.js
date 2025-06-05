@@ -73,4 +73,18 @@ export const listarMisInscripciones = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
+
+// Cambiar estado de inscripción (toggle entre 'comprado' y 'pendiente')
+export const revertirEstadoInscripcion = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const inscripcion = await Inscripcion.findByPk(id);
+    if (!inscripcion) return res.status(404).json({ error: 'Inscripción no encontrada' });
+    inscripcion.estado = inscripcion.estado === 'comprado' ? 'pendiente' : 'comprado';
+    await inscripcion.save();
+    res.json({ message: 'Estado de inscripción actualizado', estado: inscripcion.estado });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 }; 
