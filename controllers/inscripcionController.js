@@ -1,4 +1,7 @@
-import { Inscripcion, Curso, Usuario } from '../models/index.js';
+import { Inscripcion, Curso, Usuario, sequelize } from '../models/index.js';
+import Certificado from '../models/certificado.js';
+import IntentoExamen from '../models/intentoExamen.js';
+import Pago from '../models/pago.js';
 
 export const inscribir = async (req, res) => {
   try {
@@ -32,9 +35,26 @@ export const eliminarInscripcion = async (req, res) => {
     const { id } = req.params;
     const inscripcion = await Inscripcion.findByPk(id);
     if (!inscripcion) return res.status(404).json({ error: 'Inscripción no encontrada' });
+
+    // Eliminar certificados del usuario para ese curso
+    await Certificado.destroy({ where: { usuario_id: inscripcion.usuario_id, curso_id: inscripcion.curso_id } });
+
+    // Eliminar intentos de exámenes del usuario para ese curso
+    await IntentoExamen.destroy({
+      where: {
+        usuario_id: inscripcion.usuario_id,
+        // Filtrar por exámenes de ese curso
+        examen_id: (sequelize.literal(`examen_id IN (SELECT id FROM examen WHERE modulo_id IN (SELECT id FROM modulo WHERE curso_id = ${inscripcion.curso_id}))`))
+      }
+    });
+
+    // Eliminar pagos asociados a la inscripción
+    await Pago.destroy({ where: { inscripcion_id: inscripcion.id } });
+
     await inscripcion.destroy();
     res.json({ message: 'Inscripción eliminada' });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: error.message });
   }
 };

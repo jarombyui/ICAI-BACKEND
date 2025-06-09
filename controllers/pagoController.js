@@ -19,6 +19,19 @@ export const uploadComprobante = multer({ storage: storageComprobante });
 export const registrarPago = async (req, res) => {
   try {
     const { inscripcion_id, metodo, monto } = req.body;
+
+    // Verificar si ya existe un pago pendiente para esta inscripción
+    const pagoExistente = await Pago.findOne({
+      where: {
+        inscripcion_id,
+        estado: 'pendiente'
+      }
+    });
+
+    if (pagoExistente) {
+      return res.status(400).json({ error: 'Ya existe un pago pendiente para esta inscripción' });
+    }
+
     // Si el método es visa, el pago es automático y se marca como completado
     let estadoPago = 'pendiente';
     if (metodo === 'visa') estadoPago = 'completado';
@@ -42,7 +55,10 @@ export const registrarPago = async (req, res) => {
 export const listarPagosPorInscripcion = async (req, res) => {
   try {
     const { inscripcion_id } = req.params;
-    const pagos = await Pago.findAll({ where: { inscripcion_id } });
+    const pagos = await Pago.findAll({ 
+      where: { inscripcion_id },
+      order: [['fecha', 'DESC']]
+    });
     res.json(pagos);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -95,11 +111,19 @@ export const subirComprobantePago = async (req, res) => {
   try {
     const { pago_id } = req.body;
     if (!req.file) return res.status(400).json({ error: 'No se subió ningún archivo' });
+    
     const pago = await Pago.findByPk(pago_id);
     if (!pago) return res.status(404).json({ error: 'Pago no encontrado' });
+
+    // Verificar si ya existe un comprobante
+    if (pago.comprobante_url) {
+      return res.status(400).json({ error: 'Ya existe un comprobante para este pago' });
+    }
+
     pago.comprobante_url = `/uploads/comprobantes/${req.file.filename}`;
     pago.estado = 'pendiente';
     await pago.save();
+
     res.json({ url: pago.comprobante_url });
   } catch (error) {
     res.status(500).json({ error: error.message });

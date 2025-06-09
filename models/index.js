@@ -23,6 +23,10 @@ Material.belongsTo(Subtema, { foreignKey: 'subtema_id' });
 Curso.hasMany(Inscripcion, { foreignKey: 'curso_id' });
 Inscripcion.belongsTo(Curso, { foreignKey: 'curso_id' });
 
+// Relación Inscripcion <-> Pago
+Inscripcion.hasMany(Pago, { foreignKey: 'inscripcion_id', onDelete: 'CASCADE' });
+Pago.belongsTo(Inscripcion, { foreignKey: 'inscripcion_id', onDelete: 'CASCADE' });
+
 // Examenes y preguntas
 Examen.belongsTo(Modulo, { foreignKey: 'modulo_id' });
 Modulo.hasMany(Examen, { as: 'examenes', foreignKey: 'modulo_id' });
